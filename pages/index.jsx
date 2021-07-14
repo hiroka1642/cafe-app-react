@@ -1,13 +1,9 @@
+import styles from "../styles/Home.module.css";
+import { GeoLocation } from "./GoogleMap.jsx";
+import { Cafe } from "./Cafe";
 import { useCallback, useEffect, useState } from "react";
-import {
-  GoogleMap,
-  LoadScript,
-  Marker,
-  InfoWindow,
-} from "@react-google-maps/api";
-import { InfowindowA } from "./Infowindow";
 
-const GeoLocation = () => {
+export default function Home() {
   const [lat, Setlat] = useState(0);
   const [lng, Setlng] = useState(0);
   const [CafeList, setCafeList] = useState([]);
@@ -15,11 +11,6 @@ const GeoLocation = () => {
   const center = {
     lat: lat,
     lng: lng,
-  };
-
-  const containerStyle = {
-    width: "500px",
-    height: "240px",
   };
 
   useEffect(() => {
@@ -43,7 +34,6 @@ const GeoLocation = () => {
       window.alert("本アプリでは位置情報が使えません");
     }
   }
-  // const [infowindowopen, setinfowindowopen] = useState(false);
 
   //カフェリストを取得
   async function getCafeList(lat, lng) {
@@ -55,24 +45,29 @@ const GeoLocation = () => {
     for (let i = 0; i < cafelist.results.length; i++) {
       setCafeList((CafeList) => [
         ...CafeList,
-        cafelist.results[i].geometry.location,
+        {
+          name: cafelist.results[i].name,
+          position: cafelist.results[i].geometry.location,
+          icon: cafelist.results[i].icon,
+        },
       ]);
     }
     return cafelist;
   }
 
-
   return (
     <>
-      <LoadScript googleMapsApiKey="AIzaSyDMg3Gy7mKMzLXpW4UfZoPX39nECF989yg">
-        <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={15}>
-          {CafeList.map((list) => {
-            return <InfowindowA key={list.lng} center={list} />;
-          })}
-        </GoogleMap>
-      </LoadScript>
+      <div className={styles.map} id="map">
+        <GeoLocation center={center} CafeList={CafeList} />
+      </div>
+      <div className={styles.title}>
+        <h1>CAFE LIST</h1>
+      </div>
+      <ul>
+        {CafeList.map((CafeList, i) => {
+          return <Cafe CafeList={CafeList} key={i} />;
+        })}
+      </ul>
     </>
   );
-};
-
-export default GeoLocation;
+}
