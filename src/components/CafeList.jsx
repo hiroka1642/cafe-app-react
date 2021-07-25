@@ -7,6 +7,17 @@ export const List = ({ cafe, onClick }) => {
         <img src={cafe.icon} alt="" className={styles.image} />
         <div className={styles.container}>
           <p className={styles.cafename}>{cafe.name}</p>
+          <p className={styles.cafetext}>{cafe.place}</p>
+          {cafe.open ? (
+            !cafe.open ? (
+              <p className={styles.cafetext}>閉店中</p>
+            ) : (
+              <p className={styles.cafetext}>開店中</p>
+            )
+          ) : (
+            <p className={styles.cafetext}>営業時間はお問い合わせ下さい</p>
+          )}
+        </div>
       </button>
     </li>
   );
