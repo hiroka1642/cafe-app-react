@@ -1,30 +1,41 @@
 import styles from "../styles/Home.module.css";
-import { GeoLocation } from "./GoogleMap.jsx";
-import { Cafe } from "./Cafe";
+import { List } from "../src/components/CafeList";
+import { CafeMap } from "../src/components/CafeMap";
 import { useCallback, useEffect, useState } from "react";
 
 export default function Home() {
-  const [lat, Setlat] = useState(0);
-  const [lng, Setlng] = useState(0);
-  const [CafeList, setCafeList] = useState([]);
+  const [openPlaceId, setOpenPlaceId] = useState("");
+  const [latLng, setLatLng] = useState({ lat: 0, lng: 0 });
+  const [cafeList, setCafeList] = useState([]);
 
-  const center = {
-    lat: lat,
-    lng: lng,
-  };
+  const getCafeList = useCallback(
+    async (lat, lng) => {
+      const res = await fetch(
+        `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=600&type=cafe&language=ja&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
+      );
+      const data = await res.json();
+      console.log(data);
+      const cafeList = data.results.map((cafe) => {
+        return {
+          placeId: cafe.place_id,
+          name: cafe.name,
+          position: cafe.geometry.location,
+          icon: cafe.icon,
+          open: cafe.opening_hours,
+          place: cafe.vicinity,
+        };
+      });
+      setCafeList(cafeList);
+    },
+    [latLng]
+  );
 
   useEffect(() => {
-    componentDidMount();
-  }, []);
-
-  function componentDidMount() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          Setlat(pos.coords.latitude);
-          Setlng(pos.coords.longitude);
+          setLatLng({ lat: pos.coords.latitude, lng: pos.coords.longitude });
           getCafeList(pos.coords.latitude, pos.coords.longitude);
-          // cafeMarker(getCafeList(pos.coords.latitude, pos.coords.longitude));
         },
         function () {
           window.alert("位置情報の取得に失敗しました");
@@ -33,39 +44,25 @@ export default function Home() {
     } else {
       window.alert("本アプリでは位置情報が使えません");
     }
-  }
-
-  //カフェリストを取得
-  async function getCafeList(lat, lng) {
-    const res = await fetch(
-      `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=600&type=cafe&language=ja&key=AIzaSyDMg3Gy7mKMzLXpW4UfZoPX39nECF989yg`
-    );
-    const cafelist = await res.json();
-    console.log(cafelist);
-    for (let i = 0; i < cafelist.results.length; i++) {
-      setCafeList((CafeList) => [
-        ...CafeList,
-        {
-          name: cafelist.results[i].name,
-          position: cafelist.results[i].geometry.location,
-          icon: cafelist.results[i].icon,
-        },
-      ]);
-    }
-    return cafelist;
-  }
+  }, []);
 
   return (
     <>
       <div className={styles.map} id="map">
-        <GeoLocation center={center} CafeList={CafeList} />
+        <CafeMap
+          center={latLng}
+          cafeList={cafeList}
+          openPlaceId={openPlaceId}
+          setOpenPlaceId={setOpenPlaceId}
+        />
       </div>
       <div className={styles.title}>
         <h1>CAFE LIST</h1>
       </div>
-      <ul>
-        {CafeList.map((CafeList, i) => {
-          return <Cafe CafeList={CafeList} key={i} />;
+      <ul className={styles.list}>
+        {cafeList.map((cafe) => {
+          const onClick = () => setOpenPlaceId(cafe.placeId);
+          return <List key={cafe.placeId} cafe={cafe} onClick={onClick} />;
         })}
       </ul>
     </>
