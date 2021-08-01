@@ -19,3 +19,65 @@
   overflow: scroll;
   background-color: rgb(255, 245, 255);
 }
+
+.list {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 500px;
+  width: 450px;
+  overflow: scroll;
+  background-color: rgb(255, 245, 255);
+}
+
+.button {
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  padding: 10px;
+  align-items: center;
+  background-color: rgb(255, 245, 255);
+  border: none;
+}
+.cafetext,
+.cafename {
+  text-align: left;
+}
+
+.image {
+  background-color: turquoise;
+  height: 80px;
+  width: 80px;
+}
+
+.button:hover {
+  background-color: rgb(255, 184, 246);
+}
+
+.button:active {
+  background-color: rgb(177, 112, 166);
+  color: white;
+}
+
+.infowindow {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  top: -25px;
+}
+
+.infowindow p {
+  font-size: 15px;
+  font-weight: bold;
+  margin: 0;
+}
+.infowindow a:hover {
+  color: rgb(5, 160, 160);
+}
+
+.container {
+  width: 300px;
+}
