@@ -4,6 +4,7 @@ export const List = ({ cafe, onClick }) => {
   return (
     <li>
       <button className={styles.button} onClick={onClick}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={cafe.icon} alt="" className={styles.image} />
         <div className={styles.container}>
           <p className={styles.cafename}>{cafe.name}</p>

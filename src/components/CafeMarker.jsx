@@ -12,18 +12,21 @@ export const CafeMarker = (props) => {
             <a
               href={`http://www.google.com/search?q=${props.name}`}
               target="_blank"
+              rel="noreferrer"
             >
               検索
             </a>
             <a
               href={`http://www.google.com/search?q=${props.name}&tbm=isch`}
               target="_blank"
+              rel="noreferrer"
             >
               画像を検索
             </a>
             <a
               href={`http://www.google.com/maps/search/?api=1&query=${props.name}`}
               target="_blank"
+              rel="noreferrer"
             >
               グーグルマップで表示
             </a>
