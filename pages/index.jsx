@@ -49,6 +49,7 @@ export default function Home() {
   return (
     <>
       <div className={styles.map} id="map">
+        <p className="mt-10">aaaaa</p>
         <CafeMap
           center={latLng}
           cafeList={cafeList}
