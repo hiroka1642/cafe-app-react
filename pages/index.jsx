@@ -1,4 +1,3 @@
-import styles from "../styles/Home.module.css";
 import { List } from "../src/components/CafeList";
 import { CafeMap } from "../src/components/CafeMap";
 import { useCallback, useEffect, useState } from "react";
@@ -47,25 +46,26 @@ export default function Home() {
   }, []);
 
   return (
-    <>
-      <div className={styles.map} id="map">
-        <p className="mt-10">aaaaa</p>
-        <CafeMap
-          center={latLng}
-          cafeList={cafeList}
-          openPlaceId={openPlaceId}
-          setOpenPlaceId={setOpenPlaceId}
-        />
+    <div className="w-full">
+      <div className="fixed top-0">
+        <div className=" w-full">
+          <CafeMap
+            center={latLng}
+            cafeList={cafeList}
+            openPlaceId={openPlaceId}
+            setOpenPlaceId={setOpenPlaceId}
+          />
+        </div>
+        <h1 className="bg-yellow-400 text-center p-4 text-3xl text-white font-medium w-screen">
+          CAFE LIST
+        </h1>
       </div>
-      <div className={styles.title}>
-        <h1>CAFE LIST</h1>
-      </div>
-      <ul className={styles.list}>
+      <ul className="overflow-auto h-auto overscroll-none pt-80 m-auto grid grid-cols-1 md:grid-cols-3">
         {cafeList.map((cafe) => {
           const onClick = () => setOpenPlaceId(cafe.placeId);
           return <List key={cafe.placeId} cafe={cafe} onClick={onClick} />;
         })}
       </ul>
-    </>
+    </div>
   );
 }

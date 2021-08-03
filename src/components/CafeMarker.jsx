@@ -1,5 +1,4 @@
 import { InfoWindow, Marker } from "@react-google-maps/api";
-import styles from "/styles/Home.module.css";
 
 export const CafeMarker = (props) => {
   return (
@@ -7,12 +6,13 @@ export const CafeMarker = (props) => {
       <Marker position={props.position} onClick={props.onClick} />
       {props.isOpen && (
         <InfoWindow position={props.position}>
-          <div className={styles.infowindow}>
+          <div className="flex-row gap-2">
             <p>{props.name}</p>
             <a
               href={`http://www.google.com/search?q=${props.name}`}
               target="_blank"
               rel="noreferrer"
+              className="hover:text-blue-400 border-none p-2"
             >
               検索
             </a>
@@ -20,15 +20,17 @@ export const CafeMarker = (props) => {
               href={`http://www.google.com/search?q=${props.name}&tbm=isch`}
               target="_blank"
               rel="noreferrer"
+              className="hover:text-blue-400 border-none p-2"
             >
-              画像を検索
+              画像検索
             </a>
             <a
               href={`http://www.google.com/maps/search/?api=1&query=${props.name}`}
               target="_blank"
               rel="noreferrer"
+              className="hover:text-blue-400 border-none p-2"
             >
-              グーグルマップで表示
+              グーグルマップ
             </a>
           </div>
         </InfoWindow>

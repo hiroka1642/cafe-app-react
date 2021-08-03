@@ -4,7 +4,7 @@ import { CafeMarker } from "./CafeMarker";
 
 export const CafeMap = ({ center, cafeList, openPlaceId, setOpenPlaceId }) => {
   const containerStyle = useMemo(() => {
-    return { width: "500px", height: "240px" };
+    return { width: "100%", height: "250px" };
   }, []);
 
   return (
