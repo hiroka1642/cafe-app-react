@@ -1,5 +1,5 @@
-import { List } from "../src/components/CafeList";
-import { CafeMap } from "../src/components/CafeMap";
+import { List } from "../components/CafeList";
+import { CafeMap } from "../components/CafeMap";
 import { useCallback, useEffect, useState } from "react";
 
 export default function Home() {
@@ -7,27 +7,23 @@ export default function Home() {
   const [latLng, setLatLng] = useState({ lat: 0, lng: 0 });
   const [cafeList, setCafeList] = useState([]);
 
-  const getCafeList = useCallback(
-    async (lat, lng) => {
-      const res = await fetch(
-        `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=600&type=cafe&language=ja&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
-      );
-      const data = await res.json();
-      console.log(data);
-      const cafeList = data.results.map((cafe) => {
-        return {
-          placeId: cafe.place_id,
-          name: cafe.name,
-          position: cafe.geometry.location,
-          icon: cafe.icon,
-          open: cafe.opening_hours,
-          place: cafe.vicinity,
-        };
-      });
-      setCafeList(cafeList);
-    },
-    [latLng]
-  );
+  const getCafeList = useCallback(async (lat, lng) => {
+    const res = await fetch(
+      `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=600&type=cafe&language=ja&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
+    );
+    const data = await res.json();
+    const cafeList = data.results.map((cafe) => {
+      return {
+        placeId: cafe.place_id,
+        name: cafe.name,
+        position: cafe.geometry.location,
+        icon: cafe.icon,
+        open: cafe.opening_hours,
+        place: cafe.vicinity,
+      };
+    });
+    setCafeList(cafeList);
+  }, []);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -43,7 +39,7 @@ export default function Home() {
     } else {
       window.alert("本アプリでは位置情報が使えません");
     }
-  }, []);
+  }, [setLatLng, getCafeList]);
 
   return (
     <div className="w-full">
@@ -62,8 +58,8 @@ export default function Home() {
       </div>
       <ul className="overflow-auto h-auto overscroll-none pt-80 m-auto grid grid-cols-1 md:grid-cols-3">
         {cafeList.map((cafe) => {
-          const onClick = () => setOpenPlaceId(cafe.placeId);
-          return <List key={cafe.placeId} cafe={cafe} onClick={onClick} />;
+          const handleClick = () => setOpenPlaceId(cafe.placeId);
+          return <List key={cafe.placeId} cafe={cafe} onClick={handleClick} />;
         })}
       </ul>
     </div>

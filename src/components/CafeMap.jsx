@@ -15,13 +15,13 @@ export const CafeMap = (props) => {
         zoom={15}
       >
         {props.cafeList.map((cafe) => {
-          const onClick = () => props.setOpenPlaceId(cafe.placeId);
+          const handleClick = () => props.setOpenPlaceId(cafe.placeId);
           return (
             <CafeMarker
               key={cafe.placeId}
               {...cafe}
               isOpen={cafe.placeId === props.openPlaceId}
-              onClick={onClick}
+              onClick={handleClick}
             />
           );
         })}
