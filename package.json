@@ -6,7 +6,7 @@
     "dev": "next dev",
     "start": "next start",
     "lint": "next lint",
-    "build": "postcss styles.css -o dist.css"
+    "build": "next build"
   },
   "dependencies": {
     "@react-google-maps/api": "2.1.0",
