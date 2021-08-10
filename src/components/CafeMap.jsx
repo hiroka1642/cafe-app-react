@@ -14,7 +14,7 @@ export const CafeMap = (props) => {
         center={props.center}
         zoom={15}
       >
-        {props.cafeList.map((cafe) => {
+        {props.cafeList?.map((cafe) => {
           const handleClick = () => props.setOpenPlaceId(cafe.placeId);
           return (
             <CafeMarker

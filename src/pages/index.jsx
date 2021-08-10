@@ -1,18 +1,26 @@
 import { List } from "../components/CafeList";
 import { CafeMap } from "../components/CafeMap";
 import { useCallback, useEffect, useState } from "react";
+import useSWR from "swr";
 
 export default function Home() {
   const [openPlaceId, setOpenPlaceId] = useState("");
   const [latLng, setLatLng] = useState({ lat: 0, lng: 0 });
-  const [cafeList, setCafeList] = useState([]);
 
-  const getCafeList = useCallback(async (lat, lng) => {
-    const res = await fetch(
-      `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=600&type=cafe&language=ja&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
+  const GetCafeList = (lat, lng) => {
+    const { data, error } = useSWR(
+      lat
+        ? `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=600&type=cafe&language=ja&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
+        : null
     );
-    const data = await res.json();
-    const cafeList = data.results.map((cafe) => {
+
+    return { data, error };
+  };
+
+  const { data, error } = GetCafeList(latLng.lat, latLng.lng);
+
+  const GetCafe = useCallback(() => {
+    const cafeList = data?.results.map((cafe) => {
       return {
         placeId: cafe.place_id,
         name: cafe.name,
@@ -22,15 +30,21 @@ export default function Home() {
         place: cafe.vicinity,
       };
     });
-    setCafeList(cafeList);
-  }, []);
+    return cafeList;
+  }, [data]);
+
+  const cafeList = GetCafe();
 
   useEffect(() => {
+    componentDidMount();
+  });
+
+  const componentDidMount = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           setLatLng({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-          getCafeList(pos.coords.latitude, pos.coords.longitude);
+          GetCafe(pos.coords.latitude, pos.coords.longitude);
         },
         function () {
           window.alert("位置情報の取得に失敗しました");
@@ -39,8 +53,9 @@ export default function Home() {
     } else {
       window.alert("本アプリでは位置情報が使えません");
     }
-  }, [setLatLng, getCafeList]);
+  };
 
+  // const [data, error] = GetCafeList(latLng.lat, latLng.lng);
   return (
     <div className="w-full">
       <div className="fixed top-0">
@@ -56,12 +71,19 @@ export default function Home() {
           CAFE LIST
         </h1>
       </div>
-      <ul className="overflow-auto h-auto overscroll-none pt-80 m-auto grid grid-cols-1 md:grid-cols-3">
-        {cafeList.map((cafe) => {
-          const handleClick = () => setOpenPlaceId(cafe.placeId);
-          return <List key={cafe.placeId} cafe={cafe} onClick={handleClick} />;
-        })}
-      </ul>
+      <div className="pt-80 m-auto text-center">
+        {!error && !data ? "ローディング中..." : null}
+        {error ? "エラーが発生しました" : null}
+        {data === null ? "カフェが見つかりませんでした" : null}
+        <ul className="overflow-auto h-auto overscroll-none  grid grid-cols-1 md:grid-cols-3 ">
+          {cafeList?.map((cafe) => {
+            const handleClick = () => setOpenPlaceId(cafe.placeId);
+            return (
+              <List key={cafe.placeId} cafe={cafe} onClick={handleClick} />
+            );
+          })}
+        </ul>
+      </div>
     </div>
   );
 }
